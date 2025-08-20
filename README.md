@@ -141,7 +141,7 @@ geofencing-project/
 ├─ package.json
 ├─ tsconfig.json
 └─ README.md
-```
+``` 
 
 # Trigger geofence events
 Create 2 WFS-T layers using LuciadFusion, the `fusionwfst/fences.pgs` and `fusionwfst/tracks.pgs` help you to map the tables to your WFS=T Service
