@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Fence Events Listener</title>
+</head>
+<body>
+<h1>Fence Events Listener</h1>
+<ul id="events"></ul>
+
+<!-- STOMP.js UMD bundle -->
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.1.0/bundles/stomp.umd.js"></script>
+<script>
+    // Connect to Node.js WebSocket server
+    const ws = new WebSocket('ws://localhost:3000');
+    ws.onopen = () => console.log('[Browser WS] Connected');
+
+    // Wrap WebSocket with STOMP client
+    const stompClient = StompJs.Stomp.over(() => ws);
+
+    stompClient.connect({}, () => {
+        console.log('[Browser STOMP] Connected');
+
+        // Subscribe to the fence_events topic
+        stompClient.subscribe('/topic/fence_events', (msg) => {
+            const data = JSON.parse(msg.body);
+            console.log('[Browser] Fence event:', data);
+
+            const ul = document.getElementById('events');
+            const li = document.createElement('li');
+            li.textContent = `[${new Date().toLocaleTimeString()}] Track ${data.track_id} ${data.event_type} Fence ${data.fence_id}`;
+            ul.appendChild(li);
+        });
+    });
+
+    stompClient.onStompError = (frame) => {
+        console.error('[Browser STOMP ERROR]', frame.headers['message'], frame.body);
+    };
+
+    // Optional: debug messages
+    stompClient.debug = (msg) => console.log('[Browser STOMP DEBUG]', msg);
+</script>
+</body>
+</html>
