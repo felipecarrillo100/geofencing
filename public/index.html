@@ -12,7 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.1.0/bundles/stomp.umd.js"></script>
 <script>
     // Connect to Node.js WebSocket server
-    const ws = new WebSocket('ws://localhost:3000');
+    const ws = new WebSocket('ws://localhost:3000/stomp');
     ws.onopen = () => console.log('[Browser WS] Connected');
 
     // Wrap WebSocket with STOMP client
@@ -31,6 +31,15 @@
             li.textContent = `[${new Date().toLocaleTimeString()}] Track ${data.track_id} ${data.event_type} Fence ${data.fence_id}`;
             ul.appendChild(li);
         });
+
+        // Subscribe to the fence_events topic
+        stompClient.subscribe('/topic/beat', (msg) => {
+            console.log('[Browser] Beat event:', msg.body);
+        });
+
+        setInterval(()=>{
+            stompClient.send("/topic/chulito", {}, JSON.stringify({abc:123}))
+        }, 5000)
     });
 
     stompClient.onStompError = (frame) => {
